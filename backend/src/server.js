@@ -1,31 +1,31 @@
+//imports
 import express from "express";
 import dotenv from "dotenv";
-import mongoose from "mongoose";
-import { createUser } from "./controller/userContoller.js";
+import routes from "./routes/indexRoute.js";
+import dbConnection from "./config/dbconfig.js";
+import cookieParser from "cookie-parser";
+import { seedAdmin } from "./config/seedAdmin.js";
 
+//configuring dotenv
 dotenv.config();
 
+//declaration of apps and port
 const app = express();
-const port = 5050;
-const MONGODB_URL = process.env.MONGODB_URI;
+const port = process.env.PORT;
 
-const dbConnection = mongoose.connect(MONGODB_URL);
-dbConnection
-  .then(() => {
-    console.log("Connected to database successfully");
-  })
-  .catch((error) => {
-    console.log("Could not connect to database:", error);
-  });
-
+//middlewares
 app.use(express.json());
+app.use(cookieParser());
 
-app.get("/", (req, res) => {
-  res.send("This is supposed to be my lbms");
-});
+//Route
+app.use("/api", routes);
 
-app.post("/api/create", createUser);
+//SeedAdmin
+seedAdmin();
 
-app.listen(port, () => {
-  console.log(`Server is listening at port: http://localhost:${port}`);
+//app-run
+dbConnection().then(() => {
+  app.listen(port, () => {
+    console.log(`Server is listening at port: http://localhost:${port}`);
+  });
 });
