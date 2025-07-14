@@ -1,12 +1,12 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -14,9 +14,13 @@
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
-    "dotenv": "^17.0.1",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.1",
-    "nodemon": "^3.1.10"
+    "multer": "^2.0.1",
+    "nodemon": "^3.1.10z"
   }
 }
