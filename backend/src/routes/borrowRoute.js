@@ -1,8 +1,9 @@
 import express from "express";
-import { createBorrower } from "../controller/borrowController.js";
+import { borrowBook, returnBook } from "../controller/borrowController.js";
 
 const router = express.Router();
 
-router.post("/", createBorrower);
+router.post("/borrow", borrowBook);
+router.post("/return", returnBook);
 
 export default router;

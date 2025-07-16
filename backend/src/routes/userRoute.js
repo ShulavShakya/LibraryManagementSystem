@@ -1,18 +1,20 @@
 import express from "express";
 import {
-  createUser,
+  registerUser,
   getUserById,
   getUsers,
   deleteUser,
+  updateUser,
 } from "../controller/userContoller.js";
 import { authenticateToken, checkRole } from "../middleware/authMiddleware.js";
 
 const Router = express.Router();
 
-Router.post("/", [authenticateToken, checkRole("librarian")], createUser);
+Router.post("/", [authenticateToken, checkRole("librarian")], registerUser);
 // Router.post("/", createUser);
-Router.get("/", getUsers);
-Router.get("/:id", getUserById);
-Router.delete("/:id", deleteUser);
+Router.get("/", [authenticateToken, checkRole("librarian")], getUsers);
+Router.get("/:id", [authenticateToken, checkRole("librarian")], getUserById);
+Router.delete("/:id", [authenticateToken, checkRole("librarian")], deleteUser);
+Router.put("/:id", [authenticateToken, checkRole("librarian")], updateUser);
 
 export default Router;
