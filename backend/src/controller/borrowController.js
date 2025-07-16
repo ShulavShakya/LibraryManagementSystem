@@ -1,20 +1,72 @@
 import { Borrow } from "../models/Borrow.js";
+import Book from "../models/Book.js";
 
-export const createBorrower = async (req, res) => {
+// Borrow a book
+export const borrowBook = async (req, res) => {
   try {
-    const borrower = new Borrow(req.body).populate("userId").populate("isbn");
-    const savedBorrower = await borrower.save();
+    const { userId, bookId } = req.body;
+
+    const book = await Book.findById(bookId);
+    if (!book || book.available < 1) {
+      return res.status(400).json({
+        status: false,
+        message: "No available copies",
+      });
+    }
+
+    // Create borrow record
+    const borrow = new Borrow({ userId, bookId });
+    await borrow.save();
+
+    // Decrease available count
+    book.available -= 1;
+    await book.save();
+
+    res.status(201).json({
+      status: true,
+      message: "Book borrowed",
+      data: borrow,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: false,
+      message: "Server error",
+      error: err.message,
+    });
+  }
+};
+
+// Return a book
+export const returnBook = async (req, res) => {
+  try {
+    const { borrowId } = req.body;
+
+    const borrow = await Borrow.findById(borrowId).populate("bookId");
+    if (!borrow || borrow.returnDate) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid or already returned",
+      });
+    }
+
+    borrow.returnDate = new Date();
+    await borrow.save();
+
+    // Increase book availability
+    const book = await Book.findById(borrow.bookId._id);
+    book.available += 1;
+    await book.save();
 
     res.status(200).json({
       status: true,
-      message: "borrower added successfully",
-      data: savedBorrower,
+      message: "Book returned",
+      data: borrow,
     });
-  } catch (error) {
+  } catch (err) {
     res.status(500).json({
       status: false,
-      message: "Error occured while adding borrower details",
-      error: error.message,
+      message: "Server error",
+      error: err.message,
     });
   }
 };

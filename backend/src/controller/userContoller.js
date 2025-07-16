@@ -1,9 +1,20 @@
 import { User } from "../models/User.js";
 import bcrypt from "bcryptjs";
+import { sendEmail } from "../utils/sendEmail.js";
 
-export const createUser = async (req, res) => {
+export const registerUser = async (req, res) => {
   try {
     const { password, ...otherFields } = req.body;
+    const { email } = req.body;
+    const verifylink = `https://hired-it-company.vercel.app/`;
+
+    const registeredUser = await User.findOne({ email });
+    if (registeredUser) {
+      return res.status(409).json({
+        status: false,
+        message: "User already exists",
+      });
+    }
 
     if (!password) {
       return res.status(400).json({
@@ -19,16 +30,38 @@ export const createUser = async (req, res) => {
     });
     const savedUser = await user.save();
 
+    // sendEmail(
+    //   user.email,
+    //   "You've been registered",
+    //   `Hello ${user.name},
+    //    You have been successfully registered in our system.
+    //    Your credentials are:
+    //    email: ${user.email}
+    //    password: ${req.body.password}
+    //    \n\nPlease click this link to redirect to our official website`,
+    //   verifylink
+    // );
+
+    sendEmail(
+      user.email,
+      "You've been registered",
+      `Hello ${user.name},
+       You have been successfully registered in our system.
+       Your credentials are:
+       email: ${user.email}
+       password: ${req.body.password}`
+    );
+
     res.status(200).json({
       status: true,
-      message: "User created successfully",
+      message: "User registered successfully.",
       data: savedUser,
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       status: false,
-      messaage: "User couldn't be created",
+      messaage: "Error occured during the process.",
       error: error.message,
     });
   }
@@ -102,6 +135,36 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({
       status: false,
       message: `Error occured while deleting the datat of user ${req.params.id}`,
+      error: error.message,
+    });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const id = req.params;
+    const updates = req.body;
+    const updatedUser = await User.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!id) {
+      return res.status(400).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Error occured while updating",
       error: error.message,
     });
   }
