@@ -137,7 +137,9 @@ export const adminView = async (req, res) => {
         data: books,
       });
     }
-    books = await Borrow.find().populate("bookId");
+    books = await Borrow.find()
+      .populate("bookId")
+      .populate([{ path: "userId", select: "name" }]);
     if (!books || books.length === 0) {
       return res.status(400).json({
         status: false,
