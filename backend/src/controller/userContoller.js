@@ -6,7 +6,6 @@ export const registerUser = async (req, res) => {
   try {
     const { password, ...otherFields } = req.body;
     const { email } = req.body;
-    const verifylink = `https://hired-it-company.vercel.app/`;
 
     const registeredUser = await User.findOne({ email });
     if (registeredUser) {
@@ -29,18 +28,6 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
     const savedUser = await user.save();
-
-    // sendEmail(
-    //   user.email,
-    //   "You've been registered",
-    //   `Hello ${user.name},
-    //    You have been successfully registered in our system.
-    //    Your credentials are:
-    //    email: ${user.email}
-    //    password: ${req.body.password}
-    //    \n\nPlease click this link to redirect to our official website`,
-    //   verifylink
-    // );
 
     sendEmail(
       user.email,

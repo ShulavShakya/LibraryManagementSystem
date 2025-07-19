@@ -1,9 +1,23 @@
 import express from "express";
-import { borrowBook, returnBook } from "../controller/borrowController.js";
+import {
+  adminView,
+  borrowBook,
+  returnBook,
+  viewBorrowedBooks,
+} from "../controller/borrowController.js";
+import { authenticateToken, checkRole } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/borrow", borrowBook);
-router.post("/return", returnBook);
+router.post("/borrow", authenticateToken, borrowBook);
+router.post("/return", authenticateToken, returnBook);
+router.get("/view", authenticateToken, viewBorrowedBooks);
+
+router.get("/admin", [authenticateToken, checkRole("librarian")], adminView);
+router.get(
+  "/admin/:userId",
+  [authenticateToken, checkRole("librarian")],
+  adminView
+);
 
 export default router;
