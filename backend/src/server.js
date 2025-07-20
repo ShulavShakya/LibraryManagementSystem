@@ -5,6 +5,7 @@ import routes from "./routes/indexRoute.js";
 import dbConnection from "./config/dbconfig.js";
 import cookieParser from "cookie-parser";
 import { seedAdmin } from "./config/seedAdmin.js";
+import cors from "cors";
 
 //configuring dotenv
 dotenv.config();
@@ -16,6 +17,12 @@ const port = process.env.PORT;
 //middlewares
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 
 //Route
 app.use("/api", routes);
