@@ -94,19 +94,36 @@ export const removeBook = async (req, res) => {
 export const updateBook = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = { ...remaining };
+    const updates = req.body;
 
-    const updatedBook = await Book.findByIdAndUpdate(id, updates, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updateBook) {
+    const book = await Book.findById(id);
+    if (!book) {
       return res.status(400).json({
         status: false,
         message: "Book not found",
       });
     }
+
+    if (updates.available > book.quantity) {
+      return res.status(400).json({
+        status: false,
+        message:
+          "The available number of books cannot be greater than the quantity",
+      });
+    }
+
+    if (updates.quantity < book.available) {
+      return res.status(400).json({
+        status: false,
+        message:
+          "The quantity of books cannot be lower than the available books",
+      });
+    }
+
+    const updatedBook = await Book.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
 
     res.status(201).json({
       status: true,
