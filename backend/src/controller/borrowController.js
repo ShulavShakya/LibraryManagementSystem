@@ -96,13 +96,17 @@ export const returnBook = async (req, res) => {
 export const viewBorrowedBooks = async (req, res) => {
   try {
     const userId = req.user._id;
-    const borrowedBooks = await Borrow.find({ userId }).populate(
-      "userId bookId"
-    );
+    const borrowedBooks = await Borrow.find({ userId })
+      .populate({
+        path: "userId",
+        select: "name",
+      })
+      .populate({ path: "bookId", select: "name title author isbn" });
     if (!borrowedBooks || borrowedBooks.length === 0) {
       return res.status(400).json({
         status: false,
         message: "No books have been borrowed yet",
+        s,
       });
     }
     res.status(200).json({
@@ -122,8 +126,8 @@ export const viewBorrowedBooks = async (req, res) => {
 export const adminView = async (req, res) => {
   try {
     let books;
-    if (req.params.userId) {
-      const userId = req.params.userId;
+    if (req.params.id) {
+      const userId = req.params.id;
       books = await Borrow.find({ userId }).populate("bookId");
       if (!books || books.length === 0) {
         return res.status(400).json({
