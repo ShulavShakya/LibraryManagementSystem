@@ -15,7 +15,7 @@ router.get("/view", authenticateToken, viewBorrowedBooks);
 
 router.get("/admin", [authenticateToken, checkRole("librarian")], adminView);
 router.get(
-  "/admin/:userId",
+  "/admin/:id",
   [authenticateToken, checkRole("librarian")],
   adminView
 );
