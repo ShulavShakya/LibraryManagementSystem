@@ -12,7 +12,7 @@ dotenv.config();
 
 //declaration of apps and port
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5050;
 
 //middlewares
 app.use(express.json());
