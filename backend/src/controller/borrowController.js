@@ -34,6 +34,12 @@ export const borrowBook = async (req, res) => {
       `Hello ${user.name}, This email is send to you to confirm that you have borrowed the book "${book.title}"`
     );
 
+    const borrowId = req.body.id;
+    const borrowedBookData = await Borrow.findOne({ borrowId }).populate({
+      path: "bookId",
+      select: "title",
+    });
+
     // Decrease available count
     book.available -= 1;
     await book.save();
@@ -41,7 +47,7 @@ export const borrowBook = async (req, res) => {
     res.status(201).json({
       status: true,
       message: "Book borrowed",
-      data: borrow,
+      data: borrowedBookData,
     });
   } catch (err) {
     res.status(500).json({
@@ -106,7 +112,6 @@ export const viewBorrowedBooks = async (req, res) => {
       return res.status(400).json({
         status: false,
         message: "No books have been borrowed yet",
-        s,
       });
     }
     res.status(200).json({
