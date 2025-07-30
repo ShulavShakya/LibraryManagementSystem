@@ -10,7 +10,7 @@ import { authenticateToken, checkRole } from "../middleware/authMiddleware.js";
 
 const Router = express.Router();
 
-Router.post("/", registerUser);
+Router.post("/register", registerUser);
 Router.get("/", [authenticateToken, checkRole("librarian")], getUsers);
 Router.get("/:id", [authenticateToken, checkRole("librarian")], getUserById);
 Router.delete("/:id", [authenticateToken, checkRole("librarian")], deleteUser);
