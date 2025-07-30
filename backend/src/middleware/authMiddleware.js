@@ -8,7 +8,7 @@ export const authenticateToken = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         status: false,
-        message: "Unauthorized",
+        message: "Please login to continue",
       });
     }
 
