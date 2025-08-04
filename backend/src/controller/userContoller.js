@@ -6,6 +6,7 @@ export const registerUser = async (req, res) => {
   try {
     const { password, ...otherFields } = req.body;
     const { email } = req.body;
+    const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
     const registeredUser = await User.findOne({ email });
     if (registeredUser) {
@@ -27,6 +28,14 @@ export const registerUser = async (req, res) => {
       ...otherFields,
       password: hashedPassword,
     });
+
+    if (numbers.some((digit) => user.name.includes(digit))) {
+      return res.status(400).json({
+        status: false,
+        message: "Your name cannot include numbers",
+      });
+    }
+
     const savedUser = await user.save();
 
     sendEmail(

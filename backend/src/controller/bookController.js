@@ -3,6 +3,13 @@ import { Book } from "../models/Book.js";
 export const addNewBook = async (req, res) => {
   try {
     const book = new Book(req.body);
+
+    if (book.quantity < 1) {
+      return res.status(400).json({
+        status: false,
+        message: "Quantity cannot be negative",
+      });
+    }
     const savedBook = await book.save();
 
     res.status(200).json({
