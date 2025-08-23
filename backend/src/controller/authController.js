@@ -34,10 +34,12 @@ export const login = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
     });
 
+    const { password: pass, ...remData } = user._doc;
     return res.status(200).json({
       status: true,
       message: "Login successfull",
       data: token,
+      user: remData,
     });
   } catch (error) {
     console.log(error);
