@@ -1,11 +1,11 @@
 import { User } from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { sendEmail } from "../utils/sendEmail.js";
+import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   try {
-    const { password, ...otherFields } = req.body;
-    const { email } = req.body;
+    const { name, email, password } = req.body;
     const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
     const registeredUser = await User.findOne({ email });
@@ -16,16 +16,18 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    if (!password) {
+    if (!name || !password || !email) {
+      console.log("Name email and password is required");
       return res.status(400).json({
         status: false,
-        message: "password not found",
+        message: "Name email and password is required",
       });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
-      ...otherFields,
+      name: name,
+      email: email,
       password: hashedPassword,
     });
 
@@ -47,11 +49,16 @@ export const registerUser = async (req, res) => {
        email: ${user.email}
        password: ${req.body.password}`
     );
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.KEY,
+      { expiresIn: "1h" }
+    );
 
     res.status(200).json({
       status: true,
       message: "User registered successfully.",
-      data: savedUser,
+      data: { token, user: savedUser },
     });
   } catch (error) {
     console.log(error);
