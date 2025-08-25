@@ -22,12 +22,14 @@ const Login = () => {
       Cookies.set("user", JSON.stringify(user));
 
       toast.success("Logged in Successfully");
-      navigate("/dashboard");
+      if (user.role === "librarian") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/user-dashboard");
+      }
     } catch (error) {
       console.log("error: ", error);
       toast.error("Login Failed");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -86,9 +88,12 @@ const Login = () => {
 
         <p className="text-center text-lg text-[#4A3F35] mt-8 font-['Quicksand']">
           Don’t have an account?{" "}
-          <span className="text-[#A3B18A] font-semibold cursor-pointer hover:underline">
+          <button
+            className="text-[#A3B18A] font-semibold cursor-pointer hover:text-[#7B6F81] "
+            onClick={() => navigate("/register")}
+          >
             Sign up
-          </span>
+          </button>
         </p>
       </div>
     </div>
