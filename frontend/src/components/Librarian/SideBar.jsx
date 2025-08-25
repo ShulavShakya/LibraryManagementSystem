@@ -7,12 +7,25 @@ import {
   FaExchangeAlt,
   FaSignOutAlt,
   FaUserCog,
+  FaBars,
+  FaAngleLeft,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
-  const user = JSON.parse(Cookies.get("user") || "{}");
+const SideBar = ({ activeTab, setActiveTab }) => {
+  let user = {};
+  console.log("SideBar props:", { activeTab, setActiveTab });
+
+  try {
+    const userCookie = Cookies.get("user");
+    user = userCookie ? JSON.parse(userCookie) : {};
+  } catch (err) {
+    console.log("Error parsing user cookie:", err);
+    user = {};
+  }
   const role = user.role;
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const Navigate = useNavigate();
 
   const sideBarItems =
     role === "librarian"
@@ -32,43 +45,53 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           { id: "logout", name: "Logout", icon: <FaSignOutAlt /> },
         ];
 
+  const handleLogout = () => {
+    Cookies.remove("user");
+    Cookies.remove("token");
+    Navigate("/");
+  };
+
   return (
-    <div
-      className={`bg-white shadow-lg h-screen p-4 transition-width duration-300 ${
-        isOpen ? "w-64" : "w-20"
-      }`}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="mb-6 p-2 bg-gray-200 rounded-full hover:bg-gray-300"
+    <div>
+      <div
+        className={`fixed left-0 top-0 h-screen w-64 shadow-lg p-4 bg-[#FDF6EC] text-[#4A3F35]-[Quicksand]`}
       >
-        {isOpen ? "<" : ">"}
-      </button>
+        <div className="flex items-center gap-25 mb-6">
+          <h2 className="w-full text-2xl font-bold text-center font-[Merriweather] text-[#4A3F35] ">
+            Library
+          </h2>
+        </div>
 
-      {isOpen && (
-        <h2 className="text-2xl font-bold text-gray-700 mb-6">Library</h2>
-      )}
-
-      <nav className="flex flex-col gap-2">
-        {sideBarItems.map((item) => {
-          return (
+        <nav className="flex flex-col gap-2">
+          {sideBarItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex items-center gap-4 p-2 rounded hover:bg-gray-100 ${
-                activeTab === item.id
-                  ? "bg-blue-100 text-blue-600 font-semibold"
-                  : "text-gray-700"
+              onClick={() => {
+                if (item.id === "logout") {
+                  handleLogout();
+                } else {
+                  setActiveTab(item.id);
+                }
+              }}
+              className={`flex items-center gap-4 px-3 py-2 rounded transition-colors duration-200 ${
+                activeTab === item.id ? "font-semibold" : "font-medium"
               }`}
+              style={{
+                backgroundColor:
+                  activeTab === item.id ? "#D19C7A" : "transparent",
+                color: activeTab === item.id ? "#fff" : "#4A3F35",
+                fontFamily: "Quicksand, sans-serif",
+                fontSize: "16px",
+              }}
             >
               <span className="text-lg">{item.icon}</span>
-              {isOpen && <span>{item.name}</span>}
+              <span className="whitespace-nowrap">{item.name}</span>
             </button>
-          );
-        })}
-      </nav>
+          ))}
+        </nav>
+      </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default SideBar;
