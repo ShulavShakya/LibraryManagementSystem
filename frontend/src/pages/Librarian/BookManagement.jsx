@@ -11,14 +11,14 @@ const BookManagement = () => {
     title: "",
     author: "",
     isbn: "",
-    quantity: null,
+    quantity: "",
   });
 
   const defaultState = {
     title: "",
     author: "",
     isbn: "",
-    quantity: null,
+    quantity: "null",
   };
 
   const handleCancel = () => {
@@ -49,7 +49,7 @@ const BookManagement = () => {
   const handleAddBook = async (e) => {
     e.preventDefault();
     try {
-      await publicAPI.post("books/add", newBook);
+      await publicAPI.post("/book/add", newBook);
       toast.success("Book added successfully!");
       setShowModal(false);
       setNewBook({ title: "", author: "", isbn: "", quantity: 0 });
@@ -105,7 +105,7 @@ const BookManagement = () => {
           <tbody>
             {filteredBooks.length > 0 ? (
               filteredBooks.map((book) => (
-                <tr key={book.id} className="border-b hover:bg-[#FDF6EC]">
+                <tr key={book._id} className="border-b hover:bg-[#FDF6EC]">
                   <td className="p-3">{book.title}</td>
                   <td className="p-3">{book.author}</td>
                   <td className="p-3 flex gap-2">

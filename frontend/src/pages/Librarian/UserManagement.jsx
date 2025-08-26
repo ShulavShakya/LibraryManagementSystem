@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { privateAPI } from "../../utils/config";
+import { toast } from "react-toastify";
 
 const UserManagement = () => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
-  const [editingId, setEditiingId] = useState([]);
-  const [formData, setFormData] = useState([{ name: "", email: "", role: "" }]);
+  const [editingId, setEditingId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState([
+    { name: "", email: "", role: "", status: "" },
+  ]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const filteredUsers = users.filter(
     (u) =>
@@ -14,8 +23,63 @@ const UserManagement = () => {
       u.role.toLowerCase().includes(search.toLowerCase())
   );
 
+  const fetchUsers = async () => {
+    try {
+      const res = await privateAPI.get("/user/get");
+      setUsers(res.data.data || []);
+    } catch (error) {
+      console.error("Error: ", error);
+      toast.error("Error occured while getting the users data.");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this department?"))
+      return;
+    try {
+      await privateAPI.delete(`/user/delete/${id}`);
+      fetchUsers();
+      toast.success("User deleted successfully.");
+    } catch (error) {
+      console.error("Error: ", error);
+      toast.error("Couldn't delete the user");
+    }
+  };
+
+  const handleEdit = (user) => {
+    setFormData({
+      name: user.name || "",
+      email: user.email || "",
+      role: user.role || "",
+      status: user.status || "active",
+    });
+    setEditingId(user._id);
+    setShowModal(true);
+  };
+
+  const handleCancel = () => {
+    setShowModal(false);
+    setFormData({ name: "", email: "", role: "", status: "Active" });
+    setEditingId(null);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      await privateAPI.put(`/user/update/${editingId}`, formData);
+      toast.success("User updated successfully!");
+      fetchUsers();
+      setShowModal(false);
+      setFormData({ name: "", email: "", role: "", status: "Active" });
+      setEditingId(null);
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Couldn't update user.");
+    }
+  };
+
   return (
-    <div className="p-6 bg-[#FDF6EC] min-h-screen text-[#4A3F35] font-body">
+    <div className=" bg-[#FDF6EC] min-h-screen text-[#4A3F35] font-body ">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2
@@ -24,12 +88,6 @@ const UserManagement = () => {
         >
           User Management
         </h2>
-        <button
-          className="flex items-center gap-2 px-4 py-2 rounded-lg shadow"
-          style={{ backgroundColor: "#A3B18A", color: "#fff" }}
-        >
-          <FaPlus /> Add User
-        </button>
       </div>
 
       {/* Search Bar */}
@@ -39,16 +97,15 @@ const UserManagement = () => {
           placeholder="Search by name, email, or role..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2"
+          className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 border-[#D19C7A]"
           style={{
-            borderColor: "#D19C7A",
             fontFamily: "Quicksand, sans-serif",
           }}
         />
       </div>
 
       {/* Users Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto w-full">
         <table className="w-full bg-white rounded-lg shadow">
           <thead>
             <tr className="text-left bg-[#A3B18A] text-white">
@@ -62,7 +119,7 @@ const UserManagement = () => {
           <tbody>
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-[#FDF6EC]">
+                <tr key={user._id} className="border-b hover:bg-[#FDF6EC]">
                   <td className="p-3">{user.name}</td>
                   <td className="p-3">{user.email}</td>
                   <td className="p-3">{user.role}</td>
@@ -79,12 +136,17 @@ const UserManagement = () => {
                   </td>
                   <td className="p-3 flex gap-2">
                     <button
-                      className="p-2 rounded-lg"
-                      style={{ backgroundColor: "#D19C7A", color: "#fff" }}
+                      className="p-2 rounded-lg bg-[#D19C7A] text-[#fff]"
+                      onClick={() => handleEdit(user)}
                     >
                       <FaEdit />
                     </button>
-                    <button className="p-2 rounded-lg bg-red-500 text-white">
+                    <button
+                      className="p-2 rounded-lg bg-red-500 text-white"
+                      onClick={() => {
+                        handleDelete(user._id);
+                      }}
+                    >
                       <FaTrash />
                     </button>
                   </td>
@@ -100,6 +162,73 @@ const UserManagement = () => {
           </tbody>
         </table>
       </div>
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white/30 backdrop-blur-sm z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h3 className="text-xl font-bold mb-4">Update User</h3>
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <input
+                type="text"
+                placeholder="name"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                className="w-full p-2 border rounded-lg"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full p-2 border rounded-lg"
+                required
+              />
+              <select
+                type="text"
+                placeholder="Role"
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
+                className="w-full p-4 border rounded-lg"
+              >
+                <option value="librarian">Librarian</option>
+                <option value="borrower">Borrower</option>
+              </select>
+              <select
+                value={formData.status}
+                onChange={(e) =>
+                  setFormData({ ...formData, status: e.target.value })
+                }
+                className="w-full p-2 border rounded-lg"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  className="px-4 py-2 rounded-lg bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg"
+                  style={{ backgroundColor: "#A3B18A", color: "#fff" }}
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

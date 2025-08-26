@@ -5,6 +5,7 @@ import BorrowManagement from "./BorrowManagement";
 import ProfileManagement from "./ProfileManagement";
 import SideBar from "../../components/Librarian/SideBar";
 import BookManagement from "./BookManagement";
+import DashboardStats from "../../components/Librarian/DashboardStats";
 
 const LibrarianDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -32,9 +33,9 @@ const LibrarianDashboard = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-[#FDF6EC]">
       <SideBar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 p-8">{renderContent()}</div>
+      <div className="flex-1 p-6 ">{renderContent()}</div>
     </div>
   );
 };

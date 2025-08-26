@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaUndo, FaCheckCircle, FaClock } from "react-icons/fa";
 import { privateAPI } from "../../utils/config";
+import { toast } from "react-toastify";
 
 const BorrowManagement = () => {
   const [search, setSearch] = useState("");
@@ -19,7 +20,7 @@ const BorrowManagement = () => {
 
   const fetchBorrowedBooks = async () => {
     try {
-      const res = await privateAPI.get("/borrower/admin");
+      const res = await privateAPI.get("/borrower/admin/g");
       setBorrows(res.data.data || []);
     } catch (error) {
       console.error("Error: ", error);
@@ -30,7 +31,7 @@ const BorrowManagement = () => {
   };
 
   return (
-    <div className="p-6 bg-[#FDF6EC] min-h-screen text-[#4A3F35] font-body">
+    <div className="bg-[#FDF6EC] min-h-screen text-[#4A3F35] font-body">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2
@@ -78,21 +79,44 @@ const BorrowManagement = () => {
                   <td className="p-3">{borrow.borrowDate}</td>
                   <td className="p-3">{borrow.dueDate}</td>
                   <td className="p-3">
-                    <span
-                      className={`px-2 py-1 rounded-full text-sm flex items-center gap-1 w-fit ${
-                        borrow.status === "Borrowed"
-                          ? "bg-blue-200 text-blue-800"
-                          : borrow.status === "Returned"
-                          ? "bg-green-200 text-green-800"
-                          : "bg-red-200 text-red-800"
-                      }`}
-                    >
-                      {borrow.status === "Borrowed" && <FaClock />}
-                      {borrow.status === "Returned" && <FaCheckCircle />}
-                      {borrow.status === "Overdue" && <FaClock />}
-                      {borrow.status}
-                    </span>
+                    {/* Admin Status */}
+                    {borrow.adminStatus === "pending" && (
+                      <span className="px-2 py-1 rounded-full text-sm bg-yellow-200 text-yellow-800">
+                        Pending Approval
+                      </span>
+                    )}
+                    {borrow.adminStatus === "approved" && (
+                      <span className="px-2 py-1 rounded-full text-sm bg-blue-200 text-blue-800">
+                        Approved
+                      </span>
+                    )}
+                    {borrow.adminStatus === "rejected" && (
+                      <span className="px-2 py-1 rounded-full text-sm bg-red-200 text-red-800">
+                        Rejected
+                      </span>
+                    )}
+
+                    {/* Borrower Status (only show after approved) */}
+                    {borrow.adminStatus === "approved" &&
+                      borrow.borrowerStatus === "borrowed" && (
+                        <span className="ml-2 px-2 py-1 rounded-full text-sm bg-purple-200 text-purple-800">
+                          Borrowed
+                        </span>
+                      )}
+                    {borrow.adminStatus === "approved" &&
+                      borrow.borrowerStatus === "returned" && (
+                        <span className="ml-2 px-2 py-1 rounded-full text-sm bg-green-200 text-green-800">
+                          Returned
+                        </span>
+                      )}
+                    {borrow.adminStatus === "approved" &&
+                      borrow.borrowerStatus === "overdue" && (
+                        <span className="ml-2 px-2 py-1 rounded-full text-sm bg-orange-200 text-orange-800">
+                          Overdue
+                        </span>
+                      )}
                   </td>
+
                   <td className="p-3">
                     {borrow.status === "Borrowed" && (
                       <button

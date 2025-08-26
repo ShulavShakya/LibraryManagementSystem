@@ -19,7 +19,7 @@ const ProfileManagement = () => {
   };
 
   return (
-    <div className="p-6 bg-[#FDF6EC] min-h-screen text-[#4A3F35] font-body">
+    <div className="bg-[#FDF6EC] min-h-screen text-[#4A3F35] font-body">
       {/* Header */}
       <h2
         className="text-3xl font-bold mb-6"
