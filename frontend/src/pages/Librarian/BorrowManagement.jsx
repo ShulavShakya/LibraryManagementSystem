@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { FaUndo, FaCheckCircle, FaClock } from "react-icons/fa";
+import { FaUndo } from "react-icons/fa";
 import { privateAPI } from "../../utils/config";
 import { toast } from "react-toastify";
+import { format } from "date-fns";
 
 const BorrowManagement = () => {
   const [search, setSearch] = useState("");
@@ -10,8 +11,8 @@ const BorrowManagement = () => {
 
   const filteredBorrows = borrows.filter(
     (b) =>
-      b.book.toLowerCase().includes(search.toLowerCase()) ||
-      b.borrower.toLowerCase().includes(search.toLowerCase())
+      (b.bookId?.title || "").toLowerCase().includes(search.toLowerCase()) ||
+      (b.userId?.name || "").toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {
@@ -20,13 +21,24 @@ const BorrowManagement = () => {
 
   const fetchBorrowedBooks = async () => {
     try {
-      const res = await privateAPI.get("/borrower/admin/g");
+      const res = await privateAPI.get("/borrower/admin/get");
       setBorrows(res.data.data || []);
     } catch (error) {
       console.error("Error: ", error);
       toast.error(
         "An error occured while getting the borrowed books. Try again"
       );
+    }
+  };
+
+  const handleReturn = async (id) => {
+    try {
+      const res = await privateAPI.post(`/borrower/${id}/return`);
+      toast.success("Book returned successfully!");
+      fetchBorrowedBooks(); // refresh list
+    } catch (err) {
+      toast.error("Error returning book");
+      console.error(err);
     }
   };
 
@@ -73,60 +85,58 @@ const BorrowManagement = () => {
           <tbody>
             {filteredBorrows.length > 0 ? (
               filteredBorrows.map((borrow) => (
-                <tr key={borrow.id} className="border-b hover:bg-[#FDF6EC]">
-                  <td className="p-3">{borrow.book}</td>
-                  <td className="p-3">{borrow.borrower}</td>
-                  <td className="p-3">{borrow.borrowDate}</td>
-                  <td className="p-3">{borrow.dueDate}</td>
+                <tr key={borrow._id} className="border-b hover:bg-[#FDF6EC]">
+                  <td className="p-3">{borrow.bookId.title}</td>
+                  <td className="p-3">{borrow.userId.name}</td>
+                  <td>
+                    {borrow.borrowDate
+                      ? format(new Date(borrow.borrowDate), "PPpp")
+                      : "N/A"}
+                  </td>
+                  <td>
+                    {borrow.dueDate
+                      ? format(new Date(borrow.dueDate), "PPpp")
+                      : "N/A"}
+                  </td>
                   <td className="p-3">
-                    {/* Admin Status */}
-                    {borrow.adminStatus === "pending" && (
+                    {borrow.status === "pending" && (
                       <span className="px-2 py-1 rounded-full text-sm bg-yellow-200 text-yellow-800">
                         Pending Approval
                       </span>
                     )}
-                    {borrow.adminStatus === "approved" && (
+                    {borrow.status === "approved" && (
                       <span className="px-2 py-1 rounded-full text-sm bg-blue-200 text-blue-800">
                         Approved
                       </span>
                     )}
-                    {borrow.adminStatus === "rejected" && (
+                    {borrow.status === "rejected" && (
                       <span className="px-2 py-1 rounded-full text-sm bg-red-200 text-red-800">
                         Rejected
                       </span>
                     )}
-
-                    {/* Borrower Status (only show after approved) */}
-                    {borrow.adminStatus === "approved" &&
-                      borrow.borrowerStatus === "borrowed" && (
-                        <span className="ml-2 px-2 py-1 rounded-full text-sm bg-purple-200 text-purple-800">
-                          Borrowed
-                        </span>
-                      )}
-                    {borrow.adminStatus === "approved" &&
-                      borrow.borrowerStatus === "returned" && (
-                        <span className="ml-2 px-2 py-1 rounded-full text-sm bg-green-200 text-green-800">
-                          Returned
-                        </span>
-                      )}
-                    {borrow.adminStatus === "approved" &&
-                      borrow.borrowerStatus === "overdue" && (
-                        <span className="ml-2 px-2 py-1 rounded-full text-sm bg-orange-200 text-orange-800">
-                          Overdue
-                        </span>
-                      )}
+                    {borrow.status === "returned" && (
+                      <span className="px-2 py-1 rounded-full text-sm bg-green-200 text-green-800">
+                        Returned
+                      </span>
+                    )}
+                    {borrow.status === "overdue" && (
+                      <span className="px-2 py-1 rounded-full text-sm bg-orange-200 text-orange-800">
+                        Overdue
+                      </span>
+                    )}
                   </td>
 
                   <td className="p-3">
-                    {borrow.status === "Borrowed" && (
+                    {borrow.status === "approved" && (
                       <button
                         className="flex items-center gap-2 px-3 py-1 rounded-lg"
                         style={{ backgroundColor: "#D19C7A", color: "#fff" }}
+                        onClick={() => handleReturn(borrow._id)}
                       >
                         <FaUndo /> Return
                       </button>
                     )}
-                    {borrow.status !== "Borrowed" && (
+                    {borrow.status !== "approved" && (
                       <span className="text-gray-400 italic">No actions</span>
                     )}
                   </td>

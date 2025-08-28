@@ -1,30 +1,30 @@
 import { useEffect, useState } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-import { publicAPI } from "../../utils/config";
+import { publicAPI, privateAPI } from "../../utils/config";
 import { toast } from "react-toastify";
 
 const BookManagement = () => {
   const [search, setSearch] = useState("");
   const [books, setBooks] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [newBook, setNewBook] = useState({
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({
     title: "",
     author: "",
     isbn: "",
     quantity: "",
+    available: "",
   });
 
   const defaultState = {
     title: "",
     author: "",
     isbn: "",
-    quantity: "null",
+    quantity: "",
+    available: "",
   };
 
-  const handleCancel = () => {
-    setShowModal(false);
-    setNewBook(defaultState);
-  };
+  const fields = ["title", "author", "isbn", "quantity", "available"];
 
   const filteredBooks = books.filter(
     (b) =>
@@ -46,17 +46,45 @@ const BookManagement = () => {
     }
   };
 
-  const handleAddBook = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await publicAPI.post("/book/add", newBook);
-      toast.success("Book added successfully!");
-      setShowModal(false);
-      setNewBook({ title: "", author: "", isbn: "", quantity: 0 });
+      if (editingId) {
+        await privateAPI.put(`/book/update/${editingId}`, formData);
+        toast.success("Book updated successfully!");
+      } else {
+        await publicAPI.post("/book/add", formData);
+        toast.success("Book added successfully!");
+      }
       fetchBooks(); // refresh list
+      handleCancel();
     } catch (error) {
       console.error("API Error: ", error.response?.data || error.message);
-      toast.error("Couldn't add book. Try again");
+      toast.error("Operation Failed. Try again");
+    }
+  };
+
+  const handleEdit = (books) => {
+    setFormData(books);
+    setEditingId(books._id);
+    setShowModal(true);
+  };
+
+  const handleCancel = () => {
+    setShowModal(false);
+    setFormData(defaultState);
+    setEditingId(null);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure?")) return;
+    try {
+      await publicAPI.delete(`/book/delete/${id}`);
+      toast.success("Book deleted successfully");
+      fetchBooks();
+    } catch (error) {
+      console.error(error);
+      toast.error("Couldn't delete book");
     }
   };
 
@@ -91,14 +119,17 @@ const BookManagement = () => {
             fontFamily: "Quicksand, sans-serif",
           }}
         />
+        
       </div>
       {/* Books Table */}
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[500px] bg-white rounded-lg shadow">
+        <table className="w-full min-w-[500px] bg-white rounded-lg shadow overflow-x-auto">
           <thead>
             <tr className="text-left bg-[#A3B18A] text-white">
               <th className="p-3">Title</th>
               <th className="p-3">Author</th>
+              <th className="p-3">Quantity</th>
+              <th className="p-3">Available</th>
               <th className="p-3">Actions</th>
             </tr>
           </thead>
@@ -108,14 +139,24 @@ const BookManagement = () => {
                 <tr key={book._id} className="border-b hover:bg-[#FDF6EC]">
                   <td className="p-3">{book.title}</td>
                   <td className="p-3">{book.author}</td>
+                  <td className="p-3">{book.quantity}</td>
+                  <td className="p-3">{book.available}</td>
                   <td className="p-3 flex gap-2">
                     <button
                       className="p-2 rounded-lg"
                       style={{ backgroundColor: "#D19C7A", color: "#fff" }}
+                      onClick={() => {
+                        handleEdit(book);
+                      }}
                     >
                       <FaEdit />
                     </button>
-                    <button className="p-2 rounded-lg bg-red-500 text-white">
+                    <button
+                      className="p-2 rounded-lg bg-red-500 text-white"
+                      onClick={() => {
+                        handleDelete(book._id);
+                      }}
+                    >
                       <FaTrash />
                     </button>
                   </td>
@@ -123,7 +164,7 @@ const BookManagement = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="p-4 text-center text-gray-500">
+                <td colSpan="5" className="p-4 text-center text-gray-500">
                   No books found
                 </td>
               </tr>
@@ -131,52 +172,32 @@ const BookManagement = () => {
           </tbody>
         </table>
       </div>
-      {/* Add Book Modal */}
+
       {/* Add Book Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-white/30 backdrop-blur-sm z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-            <h3 className="text-xl font-bold mb-4">Add New Book</h3>
-            <form onSubmit={handleAddBook} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Title"
-                value={newBook.title}
-                onChange={(e) =>
-                  setNewBook({ ...newBook, title: e.target.value })
-                }
-                className="w-full p-2 border rounded-lg"
-                required
-              />
-              <input
-                type="text"
-                placeholder="Author"
-                value={newBook.author}
-                onChange={(e) =>
-                  setNewBook({ ...newBook, author: e.target.value })
-                }
-                className="w-full p-2 border rounded-lg"
-                required
-              />
-              <input
-                type="text"
-                placeholder="ISBN"
-                value={newBook.isbn}
-                onChange={(e) =>
-                  setNewBook({ ...newBook, isbn: e.target.value })
-                }
-                className="w-full p-2 border rounded-lg"
-              />
-              <input
-                type="number"
-                placeholder="Quantity"
-                value={newBook.quantity}
-                onChange={(e) =>
-                  setNewBook({ ...newBook, quantity: e.target.value })
-                }
-                className="w-full p-2 border rounded-lg"
-                required
-              />
+            <h3 className="text-xl font-bold mb-4">
+              {editingId ? "Edit Book" : "Add new Book"}
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {fields.map((field) => (
+                <input
+                  key={field}
+                  type={
+                    field.includes("quantity") || field.includes("available")
+                      ? "number"
+                      : "text"
+                  }
+                  placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                  value={formData[field]}
+                  onChange={(e) =>
+                    setFormData({ ...formData, [field]: e.target.value })
+                  }
+                  className="w-full p-2 border rounded-lg"
+                  required
+                />
+              ))}
 
               <div className="flex justify-end gap-2">
                 <button

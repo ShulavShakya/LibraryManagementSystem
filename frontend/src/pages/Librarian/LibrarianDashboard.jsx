@@ -5,7 +5,7 @@ import BorrowManagement from "./BorrowManagement";
 import ProfileManagement from "./ProfileManagement";
 import SideBar from "../../components/Librarian/SideBar";
 import BookManagement from "./BookManagement";
-import DashboardStats from "../../components/Librarian/DashboardStats";
+import Navbar from "../../components/NavBar";
 
 const LibrarianDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -33,10 +33,13 @@ const LibrarianDashboard = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FDF6EC]">
-      <SideBar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 p-6 ">{renderContent()}</div>
-    </div>
+    <>
+      <Navbar />
+      <div className="flex flex-col min-h-screen bg-[#FDF6EC]">
+        <SideBar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <div className="flex-1 p-6 ">{renderContent()}</div>
+      </div>
+    </>
   );
 };
 

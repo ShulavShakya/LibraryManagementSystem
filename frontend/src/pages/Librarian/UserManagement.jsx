@@ -126,7 +126,7 @@ const UserManagement = () => {
                   <td className="p-3">
                     <span
                       className={`px-2 py-1 rounded-full text-sm ${
-                        user.status === "Active"
+                        user.status === "active"
                           ? "bg-green-200 text-green-800"
                           : "bg-red-200 text-red-800"
                       }`}
