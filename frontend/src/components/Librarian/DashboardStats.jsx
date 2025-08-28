@@ -5,7 +5,9 @@ import StatsCard from "./StatsCard";
 
 const DashboardStats = () => {
   const [books, setBooks] = useState([]);
+  const [totalBooks, setTotalBooks] = useState(0);
   const [users, setUsers] = useState([]);
+  const [availableBooks, setAvailableBooks] = useState(0);
 
   useEffect(() => {
     fetchBooks(), fetchUsers();
@@ -15,6 +17,12 @@ const DashboardStats = () => {
     try {
       const res = await publicAPI.get("/book/get");
       setBooks(res.data.data || []);
+      setTotalBooks(
+        res.data.data.reduce((acc, book) => acc + (book.quantity || 0), 0)
+      );
+      setAvailableBooks(
+        res.data.data.reduce((acc, book) => acc + (book.available || 0), 0)
+      );
     } catch (error) {
       console.error("API Error: ", error.response?.data || error.message);
       toast.error("Couldn't get books. Try again");
@@ -31,9 +39,8 @@ const DashboardStats = () => {
     }
   };
 
-  const totalBooks = books.length;
   const totalUsers = users.length;
-  const availableBooks = books.filter((b) => b.quantity > 0).length;
+  // const availableBooks = books.filter((b) => b.quantity > 0).length;
   const borrowedBooks = books.filter((b) => b.isBorrowed).length;
 
   return (
