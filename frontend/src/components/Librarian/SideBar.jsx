@@ -5,10 +5,6 @@ import {
   FaBook,
   FaUsers,
   FaExchangeAlt,
-  FaSignOutAlt,
-  FaUserCog,
-  FaBars,
-  FaAngleLeft,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -24,31 +20,26 @@ const SideBar = ({ activeTab, setActiveTab }) => {
     user = {};
   }
   const role = user.role;
-  const [isOpen, setIsOpen] = useState(false);
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const sideBarItems =
     role === "librarian"
       ? [
           { id: "dashboard", name: "Dashboard", icon: <FaTachometerAlt /> },
-          { id: "books", name: "Books", icon: <FaBook /> },
+          { id: "books", name: "Manage Books", icon: <FaBook /> },
           { id: "borrow", name: "Borrow-List", icon: <FaExchangeAlt /> },
-          { id: "borrowers", name: "Users", icon: <FaUsers /> },
-          { id: "profile", name: "Profile", icon: <FaUserCog /> },
-          { id: "logout", name: "Logout", icon: <FaSignOutAlt /> },
+          { id: "borrowers", name: "Manage Users", icon: <FaUsers /> },
         ]
       : [
           { id: "dashboard", name: "Dashboard", icon: <FaTachometerAlt /> },
           { id: "books", name: "Books", icon: <FaBook /> },
           { id: "borrow", name: "Borrow-List", icon: <FaExchangeAlt /> },
-          { id: "profile", name: "Profile", icon: <FaUserCog /> },
-          { id: "logout", name: "Logout", icon: <FaSignOutAlt /> },
         ];
 
   const handleLogout = () => {
     Cookies.remove("user");
     Cookies.remove("token");
-    Navigate("/");
+    navigate("/");
   };
 
   return (
