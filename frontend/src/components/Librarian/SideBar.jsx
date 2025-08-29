@@ -20,7 +20,7 @@ const SideBar = ({ activeTab, setActiveTab }) => {
     user = {};
   }
   const role = user.role;
-  const navigate = useNavigate();
+  const Navigate = useNavigate();
 
   const sideBarItems =
     role === "librarian"
@@ -39,21 +39,24 @@ const SideBar = ({ activeTab, setActiveTab }) => {
   const handleLogout = () => {
     Cookies.remove("user");
     Cookies.remove("token");
-    navigate("/");
+    Navigate("/");
   };
 
   return (
     <div>
-      <div
-        className={`fixed left-0 top-0 h-screen w-64 shadow-lg p-4 bg-[#FDF6EC] text-[#4A3F35]-[Quicksand]`}
-      >
-        <div className="flex items-center gap-25 mb-6">
-          <h2 className="w-full text-2xl font-bold text-center font-[Merriweather] text-[#4A3F35] ">
-            Library
+      <div className="fixed left-0 top-0 h-screen w-64 bg-white text-[#111827] font-sans border-r border-gray-300">
+        {/* Sidebar Header */}
+        <div className="flex items-center justify-center h-16">
+          <h2 className="text-2xl font-bold text-center font-sans text-black">
+            Lexicon
           </h2>
         </div>
 
-        <nav className="flex flex-col gap-2">
+        {/* Full-width Divider */}
+        <div className="w-full border-b border-gray-300"></div>
+
+        {/* Sidebar Items */}
+        <nav className="flex flex-col gap-2 mt-4 p-4">
           {sideBarItems.map((item) => (
             <button
               key={item.id}
@@ -64,16 +67,11 @@ const SideBar = ({ activeTab, setActiveTab }) => {
                   setActiveTab(item.id);
                 }
               }}
-              className={`flex items-center gap-4 px-3 py-2 rounded transition-colors duration-200 ${
-                activeTab === item.id ? "font-semibold" : "font-medium"
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 text-base ${
+                activeTab === item.id
+                  ? "bg-[#2563EB] text-white font-semibold"
+                  : "text-[#6B7280] font-medium hover:bg-[#F3F4F6]"
               }`}
-              style={{
-                backgroundColor:
-                  activeTab === item.id ? "#D19C7A" : "transparent",
-                color: activeTab === item.id ? "#fff" : "#4A3F35",
-                fontFamily: "Quicksand, sans-serif",
-                fontSize: "16px",
-              }}
             >
               <span className="text-lg">{item.icon}</span>
               <span className="whitespace-nowrap">{item.name}</span>
