@@ -22,6 +22,9 @@ export const login = async (req, res) => {
       });
     }
 
+    user.status = "active";
+    await user.save();
+
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.KEY,

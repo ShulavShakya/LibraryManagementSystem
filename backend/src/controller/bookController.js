@@ -31,8 +31,8 @@ export const getAllBooks = async (req, res) => {
     const books = await Book.find();
 
     if (!books || books.length === 0) {
-      res.status(401).json({
-        status: false,
+      res.status(200).json({
+        status: true,
         message: "No books found",
       });
     }

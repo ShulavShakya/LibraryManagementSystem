@@ -29,6 +29,7 @@ export const registerUser = async (req, res) => {
       name: name,
       email: email,
       password: hashedPassword,
+      status: active,
     });
 
     if (numbers.some((digit) => user.name.includes(digit))) {
@@ -145,7 +146,7 @@ export const deleteUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
     const updates = req.body;
     const updatedUser = await User.findByIdAndUpdate(id, updates, {
       new: true,
