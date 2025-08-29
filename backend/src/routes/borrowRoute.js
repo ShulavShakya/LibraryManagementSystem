@@ -1,7 +1,8 @@
 import express from "express";
 import {
   adminView,
-  borrowBook,
+  handleBorrowRequest,
+  requestBook,
   returnBook,
   viewBorrowedBooks,
 } from "../controller/borrowController.js";
@@ -9,13 +10,18 @@ import { authenticateToken, checkRole } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/borrow", authenticateToken, borrowBook);
-router.post("/return", authenticateToken, returnBook);
-router.get("/view", authenticateToken, viewBorrowedBooks);
+router.post("/request", authenticateToken, requestBook);
+router.put("/:id/handle", authenticateToken, handleBorrowRequest);
+router.post("/:id/return", authenticateToken, returnBook);
+router.get("/view/user", authenticateToken, viewBorrowedBooks);
 
-router.get("/admin", [authenticateToken, checkRole("librarian")], adminView);
 router.get(
-  "/admin/:id",
+  "/admin/get",
+  [authenticateToken, checkRole("librarian")],
+  adminView
+);
+router.get(
+  "/admin/get/:userId",
   [authenticateToken, checkRole("librarian")],
   adminView
 );
