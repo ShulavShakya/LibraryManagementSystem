@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
     enum: ["borrower", "librarian"],
     default: "borrower",
   },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    default: "inactive",
+  },
 });
 
 export const User = mongoose.model("User", userSchema);
