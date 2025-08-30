@@ -2,10 +2,9 @@ import { useState } from "react";
 import Dashboard from "../Dashboard";
 import UserManagement from "./UserManagement";
 import BorrowManagement from "./BorrowManagement";
-import ProfileManagement from "./ProfileManagement";
+import ProfileManagement from "../ProfileManagement";
 import SideBar from "../../components/Librarian/SideBar";
 import BookManagement from "./BookManagement";
-import Navbar from "../../components/NavBar";
 
 const LibrarianDashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -34,8 +33,7 @@ const LibrarianDashboard = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="flex flex-col min-h-screen bg-[#FDF6EC]">
+      <div className="flex flex-col min-h-screen bg-gray-100">
         <SideBar activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="flex-1 p-6 ">{renderContent()}</div>
       </div>
