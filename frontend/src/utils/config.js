@@ -1,13 +1,16 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const publicAPI = axios.create({
-  baseURL: "http://localhost:5050/api",
+  baseURL: process.env.FRONTEND_URL + "/api",
   withCredentials: true,
 });
 
 export const privateAPI = axios.create({
-  baseURL: "http://localhost:5050/api",
+  baseURL: process.env.FRONTEND_URL + "/api",
   withCredentials: true,
 });
 
