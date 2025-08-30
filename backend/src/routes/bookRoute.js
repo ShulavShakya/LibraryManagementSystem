@@ -11,7 +11,7 @@ import { authenticateToken, checkRole } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/add", [authenticateToken, checkRole("librarian")], addNewBook);
-router.get("/get", [authenticateToken], getAllBooks);
+router.get("/get", getAllBooks);
 router.get("/get/:id", [authenticateToken], getBookById);
 router.delete(
   "/delete/:id",
