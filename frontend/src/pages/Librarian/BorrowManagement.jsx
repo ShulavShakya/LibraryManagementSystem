@@ -46,7 +46,7 @@ const BorrowManagement = () => {
 
   const fetchBorrowedBooks = async () => {
     try {
-      const res = await privateAPI.get("/borrower/admin/get");
+      const res = await privateAPI.get("/api/borrower/admin/get");
       setBorrows(res.data.data || []);
     } catch (error) {
       console.error("Error: ", error);
@@ -58,7 +58,7 @@ const BorrowManagement = () => {
 
   const handleApprove = async (id) => {
     try {
-      await privateAPI.put(`/borrower/${id}/handle`, { action: "approve" });
+      await privateAPI.put(`/api/borrower/${id}/handle`, { action: "approve" });
       toast.success("Request approved!");
       fetchBorrowedBooks();
     } catch (error) {
@@ -69,7 +69,7 @@ const BorrowManagement = () => {
 
   const handleReject = async (id) => {
     try {
-      await privateAPI.put(`borrower/${id}/handle`, { action: "reject" });
+      await privateAPI.put(`/api/borrower/${id}/handle`, { action: "reject" });
       toast.success("Request rejected");
     } catch (error) {
       console.log("Error: ", error);
@@ -79,7 +79,7 @@ const BorrowManagement = () => {
 
   const handleReturn = async (id) => {
     try {
-      const res = await privateAPI.post(`/borrower/${id}/return`);
+      const res = await privateAPI.post(`/api/borrower/${id}/return`);
       toast.success("Book returned successfully!");
       fetchBorrowedBooks(); // refresh list
     } catch (err) {

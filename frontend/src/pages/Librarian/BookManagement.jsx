@@ -46,7 +46,7 @@ const BookManagement = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await publicAPI.get("/book/get");
+      const res = await publicAPI.get("/api/book/get");
       setBooks(res.data.data || []);
     } catch (error) {
       console.error("API Error: ", error.response?.data || error.message);
@@ -58,10 +58,10 @@ const BookManagement = () => {
     e.preventDefault();
     try {
       if (editingId) {
-        await privateAPI.put(`/book/update/${editingId}`, formData);
+        await privateAPI.put(`/api/book/update/${editingId}`, formData);
         toast.success("Book updated successfully!");
       } else {
-        await publicAPI.post("/book/add", formData);
+        await publicAPI.post("/api/book/add", formData);
         toast.success("Book added successfully!");
       }
       fetchBooks(); // refresh list
@@ -87,7 +87,7 @@ const BookManagement = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      await publicAPI.delete(`/book/delete/${id}`);
+      await publicAPI.delete(`/api/book/delete/${id}`);
       toast.success("Book deleted successfully");
       fetchBooks();
     } catch (error) {

@@ -44,7 +44,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await privateAPI.get("/user/get");
+      const res = await privateAPI.get("/api/user/get");
       setUsers(res.data.data || []);
     } catch (error) {
       console.error("Error: ", error);
@@ -56,7 +56,7 @@ const UserManagement = () => {
     if (!window.confirm("Are you sure you want to delete this department?"))
       return;
     try {
-      await privateAPI.delete(`/user/delete/${id}`);
+      await privateAPI.delete(`/api/user/delete/${id}`);
       fetchUsers();
       toast.success("User deleted successfully.");
     } catch (error) {
@@ -85,7 +85,7 @@ const UserManagement = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await privateAPI.put(`/user/update/${editingId}`, formData);
+      await privateAPI.put(`/api/user/update/${editingId}`, formData);
       toast.success("User updated successfully!");
       fetchUsers();
       setShowModal(false);

@@ -44,7 +44,7 @@ const BorrowList = () => {
       if (userCookie) {
         const user = JSON.parse(userCookie);
         const userId = user._id;
-        const res = await publicAPI.get(`borrower/view/user/${userId}`);
+        const res = await publicAPI.get(`/api/borrower/view/user/${userId}`);
         setBorrows(res.data.data || []);
       }
     } catch (err) {

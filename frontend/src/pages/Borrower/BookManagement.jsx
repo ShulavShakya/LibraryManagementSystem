@@ -26,7 +26,7 @@ const BookManagement = () => {
   // 2️⃣ Fetch books (only if logged in)
   const fetchBooks = async () => {
     try {
-      const res = await privateAPI.get("/book/get");
+      const res = await privateAPI.get("/api/book/get");
       setBooks(res.data.data || []);
     } catch (error) {
       console.error("API Error: ", error.response?.data || error.message);
