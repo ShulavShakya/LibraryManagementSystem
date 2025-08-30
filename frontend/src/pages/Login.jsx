@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await publicAPI.post("/auth/login", { email, password });
+      const res = await publicAPI.post("/api/auth/login", { email, password });
       const user = res.data.user;
       Cookies.set("user", JSON.stringify(user));
       toast.success("Logged in Successfully");
