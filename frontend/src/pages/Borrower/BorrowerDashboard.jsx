@@ -4,7 +4,7 @@ import SideBar from "../../components/Librarian/SideBar";
 import Dashboard from "../Dashboard";
 import BookManagement from "./BookManagement";
 import BorrowManagement from "./BorrowManagement";
-import ProfileManagement from "./ProfileManagement";
+import ProfileManagement from "../ProfileManagement";
 
 const BorrowerDashboard = () => {
   const [activeTab, setActiveTab] = useState("books");
