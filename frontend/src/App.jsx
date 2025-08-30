@@ -4,16 +4,27 @@ import "./App.css";
 import Dashboard from "./pages/Dashboard";
 import Register from "./pages/Register";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
-import BorrowerDashboard from "./pages/Borrower/BorrowerDashboard";
+import BorrowList from "./pages/Borrower/BorrowList";
+import BookManagement from "./pages/Borrower/BookManagement";
 import LibrarianDashboard from "./pages/Librarian/LibrarianDashboard";
 import PageLayout from "./pages/PageLayout";
+import ProfileManagement from "./pages/ProfileManagement";
+import LandingPage from "./pages/LandingPage";
+import AboutUs from "./pages/Borrower/AboutUs";
+import ContactMe from "./pages/Borrower/ContactMe";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/contact" element={<ContactMe />} />
+      <Route path="/about-us" element={<AboutUs />} />
+      <Route path="/my-borrows" element={<BorrowList />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/explore-books" element={<BookManagement />} />
       <Route path="register" element={<Register />} />
+      <Route path="/profile" element={<ProfileManagement />} />
       <Route
         path="/admin-dashboard"
         element={
@@ -23,16 +34,6 @@ function App() {
         }
       >
         <Route index element={<LibrarianDashboard />} />
-      </Route>
-      <Route
-        path="/user-dashboard"
-        element={
-          <ProtectedRoutes allowedRoles={["borrower"]}>
-            <PageLayout />
-          </ProtectedRoutes>
-        }
-      >
-        <Route index element={<BorrowerDashboard />} />
       </Route>
     </Routes>
   );
