@@ -13,7 +13,7 @@ const router = express.Router();
 router.post("/request", authenticateToken, requestBook);
 router.put("/:id/handle", authenticateToken, handleBorrowRequest);
 router.post("/:id/return", authenticateToken, returnBook);
-router.get("/view/user", authenticateToken, viewBorrowedBooks);
+router.get("/view/user/:id", authenticateToken, viewBorrowedBooks);
 
 router.get(
   "/admin/get",
