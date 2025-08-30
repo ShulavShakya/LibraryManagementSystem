@@ -6,10 +6,8 @@ import "./index.css";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-      <ToastProvider />
-    </BrowserRouter>
-  </StrictMode>
+  <BrowserRouter>
+    <App />
+    <ToastProvider />
+  </BrowserRouter>
 );
