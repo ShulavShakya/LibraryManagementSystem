@@ -167,13 +167,12 @@ export const returnBook = async (req, res) => {
     borrow.returnDate = new Date();
 
     // Check overdue
-    if (borrow.returnedAt > borrow.dueDate) {
+    if (borrow.returnDate > borrow.dueDate) {
       const daysLate = Math.ceil(
-        (borrow.returnedAt - borrow.dueDate) / (1000 * 60 * 60 * 24)
+        (borrow.returnDate - borrow.dueDate) / (1000 * 60 * 60 * 24)
       );
       borrow.status = "overdue";
-      borrow.fine = daysLate * 10;
-      qhat;
+      borrow.fine = daysLate * 5;
     } else {
       borrow.status = "returned";
       borrow.fine = 0;
@@ -207,8 +206,8 @@ export const returnBook = async (req, res) => {
 
 export const viewBorrowedBooks = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const borrowedBooks = await Borrow.find({ userId })
+    const { id } = req.params;
+    const borrowedBooks = await Borrow.find({ userId: id })
       .populate({
         path: "userId",
         select: "name",
