@@ -48,7 +48,7 @@ const SideBar = ({ activeTab, setActiveTab }) => {
         {/* Sidebar Header */}
         <div className="flex items-center justify-center h-16">
           <h2 className="text-2xl font-bold text-center font-sans text-black">
-            Lexicon
+            TheWhimsical
           </h2>
         </div>
 
