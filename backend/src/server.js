@@ -12,6 +12,7 @@ dotenv.config();
 
 //declaration of apps and port
 const app = express();
+app.set("trust proxy", 1);
 const port = process.env.PORT || 5050;
 //middlewares
 app.use(express.json());
