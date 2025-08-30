@@ -17,7 +17,7 @@ const Login = () => {
       const res = await publicAPI.post("/api/auth/login", { email, password });
       const user = res.data.user;
       Cookies.set("user", JSON.stringify(user));
-      Cookies.set("token", res.data.data.token);
+      Cookies.set("token", res.data.token);
       toast.success("Logged in Successfully");
       if (user.role === "librarian") navigate("/admin-dashboard");
       else navigate("/");
