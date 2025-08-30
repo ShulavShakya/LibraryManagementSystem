@@ -5,12 +5,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const publicAPI = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: "https://the-whimsical.onrender.com/api",
   withCredentials: true,
 });
 
 export const privateAPI = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: "https://the-whimsical.onrender.com/api",
   withCredentials: true,
 });
 
