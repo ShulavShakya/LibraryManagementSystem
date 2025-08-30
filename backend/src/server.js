@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://the-whimsical.vercel.app/",
+    origin: "https://the-whimsical.vercel.app/" || "*",
     credentials: true,
   })
 );
