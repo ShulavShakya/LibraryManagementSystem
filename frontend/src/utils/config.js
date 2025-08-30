@@ -5,12 +5,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const publicAPI = axios.create({
-  baseURL: process.env.FRONTEND_URL + "/api",
+  baseURL: process.env.FRONTEND_URL,
   withCredentials: true,
 });
 
 export const privateAPI = axios.create({
-  baseURL: process.env.FRONTEND_URL + "/api",
+  baseURL: process.env.FRONTEND_URL,
   withCredentials: true,
 });
 
