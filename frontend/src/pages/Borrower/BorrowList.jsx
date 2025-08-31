@@ -118,30 +118,6 @@ const BorrowList = () => {
             <span className="text-xs mt-2 block">
               Filtered by: {filter === "All" ? "" : filter}
             </span>
-
-            {/* Layout Buttons */}
-            {/* <div className="flex gap-2">
-              <button
-                onClick={() => setIsTableView(true)}
-                className={`px-4 py-2 rounded-xl font-medium transition ${
-                  isTableView
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Table View
-              </button>
-              <button
-                onClick={() => setIsTableView(false)}
-                className={`px-4 py-2 rounded-xl font-medium transition ${
-                  !isTableView
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                Card View
-              </button> */}
-            {/* </div> */}
           </div>
         </div>
       </div>

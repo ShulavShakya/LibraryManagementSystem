@@ -101,6 +101,11 @@ const BookManagement = () => {
               <option value="Out of Stock">Out Of Stock</option>
             </select>
           </div>
+          <div className="flex justify-between">
+            <span className="text-xs mt-2 block">
+              Filtered by: {filter === "All" ? "" : filter}
+            </span>
+          </div>
         </div>
       </div>
 
