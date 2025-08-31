@@ -29,7 +29,7 @@ export const registerUser = async (req, res) => {
       name: name,
       email: email,
       password: hashedPassword,
-      status: active,
+      status: "active",
     });
 
     if (numbers.some((digit) => user.name.includes(digit))) {
