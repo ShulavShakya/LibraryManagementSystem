@@ -38,7 +38,7 @@ const LandingPage = () => {
 
           <div className="relative z-10 p-10 md:p-16">
             <h1 className="text-4xl md:text-5xl font-bold">
-              Welcome to LibraryOS
+              Welcome to TheWhimsical
             </h1>
             <p className="mt-4 text-gray-100 max-w-2xl mx-auto">
               Discover your next favorite book from our extensive collection.

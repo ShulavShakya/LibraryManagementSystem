@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await publicAPI.post("/api/auth/login", { email, password });
+      const res = await publicAPI.post("/auth/login", { email, password });
       const user = res.data.user;
       Cookies.set("user", JSON.stringify(user));
       Cookies.set("token", res.data.data);
@@ -53,7 +53,7 @@ const Login = () => {
           {/* Login Form */}
           <div className="w-full md:w-1/2 p-8 md:p-14 flex flex-col justify-center">
             <h1 className="text-3xl font-bold text-[#111827] text-center mb-8">
-              Sign in to LibraryOS
+              Sign in to TheWhimsical
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">

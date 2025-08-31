@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import Navbar from "../components/Librarian/NavBar";
 import GeneralNavBar from "../components/Borrower/GeneralNavBar";
 import Footer from "../components/Borrower/Footer";
+import Cookies from "js-cookie";
 
 const ProfileManagement = () => {
-  const [profile, setProfile] = useState({
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    role: "Librarian",
-    password: "",
-  });
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const cookieUser = Cookies.get("user"); // 👈 read cookie
+    if (cookieUser) {
+      try {
+        setProfile(JSON.parse(cookieUser)); // 👈 parse stored JSON string
+      } catch (err) {
+        console.error("Invalid cookie format", err);
+      } 
+    }
+  }, []);
 
   const handleChange = (e) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
@@ -18,8 +24,18 @@ const ProfileManagement = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
+    // Here you might also want to update the cookie or call API
+    Cookies.set("user", JSON.stringify(profile)); // 👈 update cookie with new values
     alert("Profile updated successfully!");
   };
+
+  if (!profile) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>No profile data found</p>
+      </div>
+    );
+  }
 
   const roleColor =
     profile.role === "Librarian" ? "bg-[#166FE5]" : "bg-[#34A853]";
@@ -88,7 +104,7 @@ const ProfileManagement = () => {
                 <input
                   type="password"
                   name="password"
-                  value={profile.password}
+                  value={profile.password || ""}
                   onChange={handleChange}
                   placeholder="Enter new password"
                   className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#166FE5] border-[#E5E7EB] text-[#111827]"
