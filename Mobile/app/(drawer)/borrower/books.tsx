@@ -18,7 +18,7 @@ interface Book {
   author: string;
   isbn: string;
   quantity: number;
-  availableQuantity: number;
+  available: number; // Changed from availableQuantity to available
 }
 
 export default function BooksScreen() {
@@ -33,7 +33,7 @@ export default function BooksScreen() {
   const fetchBooks = async () => {
     try {
       const token = await getAuthToken();
-      const response = await axios.get("http://localhost:5050/api/books", {
+      const response = await axios.get("http://localhost:5050/api/book/get", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBooks(response.data.data || []);
@@ -47,7 +47,7 @@ export default function BooksScreen() {
           author: "F. Scott Fitzgerald",
           isbn: "978-0743273565",
           quantity: 5,
-          availableQuantity: 3,
+          available: 3,
         },
         {
           _id: "2",
@@ -55,7 +55,7 @@ export default function BooksScreen() {
           author: "George Orwell",
           isbn: "978-0451524935",
           quantity: 4,
-          availableQuantity: 2,
+          available: 2,
         },
         {
           _id: "3",
@@ -63,7 +63,7 @@ export default function BooksScreen() {
           author: "Harper Lee",
           isbn: "978-0446310789",
           quantity: 6,
-          availableQuantity: 4,
+          available: 4,
         },
       ]);
     } finally {
@@ -83,7 +83,7 @@ export default function BooksScreen() {
             try {
               const token = await getAuthToken();
               await axios.post(
-                "http://localhost:5050/api/borrows",
+                "http://localhost:5050/api/borrower/request",
                 { bookId },
                 { headers: { Authorization: `Bearer ${token}` } }
               );
@@ -141,7 +141,7 @@ export default function BooksScreen() {
               <View className="ml-4">
                 <View className="bg-blue-100 px-3 py-1 rounded-full">
                   <Text className="text-blue-800 text-xs font-medium">
-                    {book.availableQuantity} available
+                    {book.available} available
                   </Text>
                 </View>
               </View>
@@ -155,13 +155,13 @@ export default function BooksScreen() {
               </View>
               <TouchableOpacity
                 onPress={() => handleBorrow(book._id, book.title)}
-                disabled={book.availableQuantity === 0}
+                disabled={book.available === 0}
                 className={`px-4 py-2 rounded-lg ${
-                  book.availableQuantity > 0 ? "bg-blue-500" : "bg-gray-400"
+                  book.available > 0 ? "bg-blue-500" : "bg-gray-400"
                 }`}
               >
                 <Text className="text-white font-medium">
-                  {book.availableQuantity > 0 ? "Borrow" : "Unavailable"}
+                  {book.available > 0 ? "Borrow" : "Unavailable"}
                 </Text>
               </TouchableOpacity>
             </View>

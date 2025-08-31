@@ -37,12 +37,17 @@ export default function LoginScreen() {
         {
           email,
           password,
+        },
+        {
+          withCredentials: true,
         }
       );
 
       const data = response.data;
       await setAuthToken(data.data);
       await setUserData(data.user);
+
+      console.log(response.data.data);
 
       // Navigate based on user role
       if (data.user.role === "librarian") {

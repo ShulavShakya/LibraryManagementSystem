@@ -14,20 +14,21 @@ import { getAuthToken } from "../../../utils/token";
 
 interface Borrow {
   _id: string;
-  book: {
+  bookId: {
     _id: string;
     title: string;
     author: string;
   };
-  user: {
+  userId: {
     _id: string;
     name: string;
     email: string;
   };
-  borrowDate: string;
-  dueDate: string;
+  requestDate: string;
+  borrowDate?: string;
+  dueDate?: string;
   returnDate?: string;
-  status: "borrowed" | "returned" | "overdue";
+  status: "pending" | "approved" | "rejected" | "returned" | "overdue";
 }
 
 export default function BorrowersScreen() {
@@ -42,9 +43,14 @@ export default function BorrowersScreen() {
   const fetchBorrows = async () => {
     try {
       const token = await getAuthToken();
-      const response = await axios.get("http://localhost:5050/api/borrows", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      console.log(token);
+
+      const response = await axios.get(
+        "http://localhost:5050/api/borrower/admin/get",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setBorrows(response.data.data || []);
     } catch (error) {
       console.error("Error fetching borrows:", error);
@@ -52,23 +58,22 @@ export default function BorrowersScreen() {
       setBorrows([
         {
           _id: "1",
-          book: {
+          bookId: {
             _id: "1",
             title: "The Great Gatsby",
             author: "F. Scott Fitzgerald",
           },
-          user: { _id: "1", name: "John Doe", email: "john@example.com" },
+          userId: { _id: "1", name: "John Doe", email: "john@example.com" },
+          requestDate: "2024-01-01T00:00:00.000Z",
           borrowDate: "2024-01-01T00:00:00.000Z",
           dueDate: "2024-01-15T00:00:00.000Z",
-          status: "borrowed",
+          status: "approved",
         },
         {
           _id: "2",
-          book: { _id: "2", title: "1984", author: "George Orwell" },
-          user: { _id: "2", name: "Jane Smith", email: "jane@example.com" },
-          borrowDate: "2023-12-15T00:00:00.000Z",
-          dueDate: "2024-01-10T00:00:00.000Z",
-          returnDate: "2024-01-10T00:00:00.000Z",
+          bookId: { _id: "2", title: "1984", author: "George Orwell" },
+          userId: { _id: "2", name: "Jane Smith", email: "jane@example.com" },
+          requestDate: "2023-12-15T00:00:00.000Z",
           status: "returned",
         },
       ]);
@@ -88,8 +93,8 @@ export default function BorrowersScreen() {
           onPress: async () => {
             try {
               const token = await getAuthToken();
-              await axios.put(
-                `http://localhost:5050/api/borrows/${borrowId}/return`,
+              await axios.post(
+                `http://localhost:5050/api/borrower/${borrowId}/return`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
               );
@@ -160,9 +165,9 @@ export default function BorrowersScreen() {
             <View className="flex-row justify-between items-start mb-3">
               <View className="flex-1">
                 <Text className="text-lg font-bold text-gray-900">
-                  {borrow.book.title}
+                  {borrow.bookId.title}
                 </Text>
-                <Text className="text-gray-600">{borrow.book.author}</Text>
+                <Text className="text-gray-600">{borrow.bookId.author}</Text>
               </View>
               <View
                 className={`px-3 py-1 rounded-full ${getStatusColor(borrow.status)}`}
@@ -176,20 +181,28 @@ export default function BorrowersScreen() {
             <View className="mb-3">
               <Text className="text-gray-700">
                 <Text className="font-medium">Borrower:</Text>{" "}
-                {borrow.user.name}
+                {borrow.userId.name}
               </Text>
               <Text className="text-gray-700">
-                <Text className="font-medium">Email:</Text> {borrow.user.email}
+                <Text className="font-medium">Email:</Text>{" "}
+                {borrow.userId.email}
               </Text>
             </View>
 
             <View className="mb-3">
               <Text className="text-gray-600 text-sm">
-                Borrowed: {new Date(borrow.borrowDate).toLocaleDateString()}
+                Requested: {new Date(borrow.requestDate).toLocaleDateString()}
               </Text>
-              <Text className="text-gray-600 text-sm">
-                Due: {new Date(borrow.dueDate).toLocaleDateString()}
-              </Text>
+              {borrow.borrowDate && (
+                <Text className="text-gray-600 text-sm">
+                  Borrowed: {new Date(borrow.borrowDate).toLocaleDateString()}
+                </Text>
+              )}
+              {borrow.dueDate && (
+                <Text className="text-gray-600 text-sm">
+                  Due: {new Date(borrow.dueDate).toLocaleDateString()}
+                </Text>
+              )}
               {borrow.returnDate && (
                 <Text className="text-gray-600 text-sm">
                   Returned: {new Date(borrow.returnDate).toLocaleDateString()}
@@ -197,7 +210,7 @@ export default function BorrowersScreen() {
               )}
             </View>
 
-            {borrow.status === "borrowed" && (
+            {borrow.status === "approved" && (
               <TouchableOpacity
                 onPress={() => handleReturn(borrow._id)}
                 className="bg-green-500 py-2 px-4 rounded-lg self-end"

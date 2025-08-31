@@ -4,13 +4,6 @@ export default function DrawerLayout() {
   return (
     <Drawer>
       <Drawer.Screen
-        name="(tabs)"
-        options={{
-          drawerLabel: "Home",
-          title: "Main Tabs",
-        }}
-      />
-      <Drawer.Screen
         name="login"
         options={{
           drawerLabel: "Login",

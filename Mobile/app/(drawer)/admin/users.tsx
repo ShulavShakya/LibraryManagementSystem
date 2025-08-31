@@ -20,6 +20,7 @@ interface User {
   email: string;
   role: "borrower" | "librarian";
   status: "active" | "inactive";
+  password?: string; // Optional for display purposes
 }
 
 export default function UsersScreen() {
@@ -118,9 +119,12 @@ export default function UsersScreen() {
         onPress: async () => {
           try {
             const token = await getAuthToken();
-            await axios.delete(`http://localhost:5050/api/users/${userId}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
+            await axios.delete(
+              `http://localhost:5050/api/user/delete/${userId}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
             Alert.alert("Success", "User deleted successfully!");
             fetchUsers();
           } catch (error) {

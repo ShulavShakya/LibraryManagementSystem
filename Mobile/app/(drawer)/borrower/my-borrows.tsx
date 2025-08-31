@@ -10,19 +10,20 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import axios from "axios";
-import { getAuthToken } from "../../../utils/token";
+import { getAuthToken, getUserData } from "../../../utils/token";
 
 interface Borrow {
   _id: string;
-  book: {
+  bookId: {
     _id: string;
     title: string;
     author: string;
   };
-  borrowDate: string;
-  dueDate: string;
+  requestDate: string;
+  borrowDate?: string;
+  dueDate?: string;
   returnDate?: string;
-  status: "borrowed" | "returned" | "overdue";
+  status: "pending" | "approved" | "rejected" | "returned" | "overdue";
 }
 
 export default function MyBorrowsScreen() {
@@ -37,8 +38,14 @@ export default function MyBorrowsScreen() {
   const fetchMyBorrows = async () => {
     try {
       const token = await getAuthToken();
+      const userData = await getUserData();
+
+      if (!userData?._id) {
+        throw new Error("User data not found");
+      }
+
       const response = await axios.get(
-        "http://localhost:5050/api/borrows/my-borrows",
+        `http://localhost:5050/api/borrower/view/user/${userData._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -50,20 +57,20 @@ export default function MyBorrowsScreen() {
       setBorrows([
         {
           _id: "1",
-          book: {
+          bookId: {
             _id: "1",
             title: "The Great Gatsby",
             author: "F. Scott Fitzgerald",
           },
+          requestDate: "2024-01-01T00:00:00.000Z",
           borrowDate: "2024-01-01T00:00:00.000Z",
           dueDate: "2024-01-15T00:00:00.000Z",
-          status: "borrowed",
+          status: "approved",
         },
         {
           _id: "2",
-          book: { _id: "2", title: "1984", author: "George Orwell" },
-          borrowDate: "2023-12-15T00:00:00.000Z",
-          dueDate: "2024-01-10T00:00:00.000Z",
+          bookId: { _id: "2", title: "1984", author: "George Orwell" },
+          requestDate: "2023-12-15T00:00:00.000Z",
           returnDate: "2024-01-10T00:00:00.000Z",
           status: "returned",
         },
@@ -129,9 +136,9 @@ export default function MyBorrowsScreen() {
             <View className="flex-row justify-between items-start mb-3">
               <View className="flex-1">
                 <Text className="text-lg font-bold text-gray-900">
-                  {borrow.book.title}
+                  {borrow.bookId.title}
                 </Text>
-                <Text className="text-gray-600">{borrow.book.author}</Text>
+                <Text className="text-gray-600">{borrow.bookId.author}</Text>
               </View>
               <View
                 className={`px-3 py-1 rounded-full ${getStatusColor(borrow.status)}`}
@@ -144,11 +151,18 @@ export default function MyBorrowsScreen() {
 
             <View className="mb-3">
               <Text className="text-gray-600 text-sm">
-                Borrowed: {new Date(borrow.borrowDate).toLocaleDateString()}
+                Requested: {new Date(borrow.requestDate).toLocaleDateString()}
               </Text>
-              <Text className="text-gray-600 text-sm">
-                Due: {new Date(borrow.dueDate).toLocaleDateString()}
-              </Text>
+              {borrow.borrowDate && (
+                <Text className="text-gray-600 text-sm">
+                  Borrowed: {new Date(borrow.borrowDate).toLocaleDateString()}
+                </Text>
+              )}
+              {borrow.dueDate && (
+                <Text className="text-gray-600 text-sm">
+                  Due: {new Date(borrow.dueDate).toLocaleDateString()}
+                </Text>
+              )}
               {borrow.returnDate && (
                 <Text className="text-gray-600 text-sm">
                   Returned: {new Date(borrow.returnDate).toLocaleDateString()}

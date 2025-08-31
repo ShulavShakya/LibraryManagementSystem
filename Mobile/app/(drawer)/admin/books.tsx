@@ -20,7 +20,7 @@ interface Book {
   author: string;
   isbn: string;
   quantity: number;
-  availableQuantity: number;
+  available: number; // Changed from availableQuantity to available
 }
 
 export default function BooksManagementScreen() {
@@ -43,7 +43,7 @@ export default function BooksManagementScreen() {
   const fetchBooks = async () => {
     try {
       const token = await getAuthToken();
-      const response = await axios.get("http://localhost:5050/api/books", {
+      const response = await axios.get("http://localhost:5050/api/book/get", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBooks(response.data.data || []);
@@ -57,7 +57,7 @@ export default function BooksManagementScreen() {
           author: "F. Scott Fitzgerald",
           isbn: "978-0743273565",
           quantity: 5,
-          availableQuantity: 3,
+          available: 3,
         },
         {
           _id: "2",
@@ -65,7 +65,7 @@ export default function BooksManagementScreen() {
           author: "George Orwell",
           isbn: "978-0451524935",
           quantity: 4,
-          availableQuantity: 2,
+          available: 2,
         },
       ]);
     } finally {
@@ -87,7 +87,7 @@ export default function BooksManagementScreen() {
     try {
       const token = await getAuthToken();
       await axios.post(
-        "http://localhost:5050/api/books",
+        "http://localhost:5050/api/book/add",
         { ...formData, quantity: parseInt(formData.quantity) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -106,7 +106,7 @@ export default function BooksManagementScreen() {
     try {
       const token = await getAuthToken();
       await axios.put(
-        `http://localhost:5050/api/books/${editingBook._id}`,
+        `http://localhost:5050/api/book/update/${editingBook._id}`,
         { ...formData, quantity: parseInt(formData.quantity) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -131,9 +131,12 @@ export default function BooksManagementScreen() {
           onPress: async () => {
             try {
               const token = await getAuthToken();
-              await axios.delete(`http://localhost:5050/api/books/${bookId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
+              await axios.delete(
+                `http://localhost:5050/api/book/delete/${bookId}`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              );
               Alert.alert("Success", "Book deleted successfully!");
               fetchBooks();
             } catch (error) {
@@ -214,7 +217,7 @@ export default function BooksManagementScreen() {
                     Total: {book.quantity}
                   </Text>
                   <Text className="text-sm text-gray-600">
-                    Available: {book.availableQuantity}
+                    Available: {book.available}
                   </Text>
                 </View>
               </View>
