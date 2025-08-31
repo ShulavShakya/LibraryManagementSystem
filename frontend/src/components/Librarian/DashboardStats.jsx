@@ -18,7 +18,7 @@ const DashboardStats = () => {
 
   const fetchBooks = async () => {
     try {
-      const res = await publicAPI.get("/api/book/get");
+      const res = await publicAPI.get("/book/get");
       setBooks(res.data.data || []);
       setTotalBooks(
         res.data.data.reduce((acc, book) => acc + (book.quantity || 0), 0)
@@ -31,7 +31,7 @@ const DashboardStats = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await privateAPI.get("/api/user/get");
+      const res = await privateAPI.get("/user/get");
       setUsers(res.data.data || []);
     } catch (error) {
       console.error("Error: ", error);
@@ -41,7 +41,7 @@ const DashboardStats = () => {
 
   const fetchBorrowedBooks = async () => {
     try {
-      const res = await privateAPI.get("/api/borrower/admin/get");
+      const res = await privateAPI.get("/borrower/admin/get");
       const borrowed = res.data.data.filter(
         (book) => book.status === "approved"
       );
