@@ -41,12 +41,17 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:8081"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:8081",
+      "https://the-whimsical.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
-//Route
+//Routes
 app.use("/api", routes);
 
 //SeedAdmin
