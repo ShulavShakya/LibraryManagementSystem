@@ -53,6 +53,9 @@ app.use(
 
 //Routes
 app.use("/api", routes);
+app.get("/api/get/test-cookie", (req, res) => {
+  res.json({ cookie: req.cookies });
+});
 
 //SeedAdmin
 seedAdmin();
