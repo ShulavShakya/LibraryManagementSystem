@@ -12,40 +12,15 @@ dotenv.config();
 
 //declaration of apps and port
 const app = express();
-// app.set("trust proxy", 1);
+
 const port = process.env.PORT || 5050;
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (!origin) return callback(null, true); // allow requests like Postman/cURL
-
-//     const allowedOrigins = [
-//       "http://localhost:5050", // local dev
-//       "https://the-whimsical.vercel.app", // production
-//     ];
-
-//     // Allow any vercel preview subdomain for this project
-//     const vercelPreviewRegex =
-//       /^https:\/\/the-whimsical-[\w-]+-shulavshakyas-projects\.vercel\.app$/;
-
-//     if (allowedOrigins.includes(origin) || vercelPreviewRegex.test(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   credentials: true,
-// };
 
 //middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:8081",
-      "https://the-whimsical.vercel.app",
-    ],
+    origin: "https://the-whimsical.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
