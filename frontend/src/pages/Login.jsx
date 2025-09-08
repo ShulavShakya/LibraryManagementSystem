@@ -23,6 +23,7 @@ const Login = () => {
       else navigate("/");
     } catch (error) {
       toast.error("Login Failed");
+      console.error("Error: ", error);
     }
   };
 
